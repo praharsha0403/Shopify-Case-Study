@@ -4207,6 +4207,10 @@ button:focus-visible,
   filter: none;
   box-shadow: 0 10px 24px -14px rgba(0, 115, 255, 0.55);
 }
+/* the arrow swaps for a check mid-swipe; the press must land on the knob or the release click is lost */
+.pc2-cta__ic svg {
+  pointer-events: none;
+}
 .pc2-cta:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 3px;
