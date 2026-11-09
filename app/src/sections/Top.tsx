@@ -165,6 +165,11 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
     window.setTimeout(() => (suppress.current = false), 600);
   };
   const onClick = (e: React.MouseEvent) => {
+    // a swipe the browser refused to open mid-drag: this release click is a real link click, so the new tab opens
+    if (pending.current) {
+      pending.current = false;
+      return;
+    }
     if (suppress.current) e.preventDefault();
   };
   // the moment the knob crosses the line: snap to the end and open; if the browser
@@ -174,7 +179,7 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
     setState("done");
     trackEvent("contact", { c: "call", via: "swipe", at: "thesis" });
     pending.current = !open();
-    blockClick();
+    if (!pending.current) blockClick();
     window.setTimeout(() => {
       setState("idle");
       setX(0);
@@ -192,11 +197,16 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
     }
     setX(dx);
   };
-  const onUp = () => {
+  const onUp = (e: React.PointerEvent<HTMLSpanElement>) => {
     if (pending.current) {
-      pending.current = false;
-      // still blocked after release: go there in this tab rather than do nothing
-      if (!open()) window.location.href = href;
+      const last = () => {
+        if (!pending.current) return;
+        pending.current = false;
+        if (!open()) window.location.href = href;
+      };
+      // a mouse release is followed by a click (see onClick); a touch release is itself a gesture and fires no click after a drag
+      if (e.pointerType === "mouse") window.setTimeout(last, 400);
+      else last();
       return;
     }
     const d = drag.current;

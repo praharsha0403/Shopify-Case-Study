@@ -75,7 +75,7 @@ function run() {
     dirty = true;
     if (ev.length < MAX_EV) ev.push(p ? [name, since(), cur, p] : [name, since(), cur]);
   }
-  emit = (name, p) => { add(name, p); soon(); };
+  emit = (name, p) => { if (name === "contact" && p) { lastContact = String(p.c); lastContactT = Date.now(); } add(name, p); soon(); };
 
   function scan() {
     nodes = ([...document.querySelectorAll("main > section, footer.foot")] as HTMLElement[]).map((el) => ({ id: secId(el), el })).filter((x) => x.id);
