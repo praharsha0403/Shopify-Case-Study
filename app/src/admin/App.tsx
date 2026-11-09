@@ -60,10 +60,10 @@ function Lock({ onOk, setupMsg, passkeys }: { onOk: () => void; setupMsg: string
   return <div className="adm-lock"><Wall />
     <div className="adm-clock"><div className="adm-date">{date}</div><time className="adm-time">{time}</time></div>
     <form className="adm-who" onSubmit={submit}>
-      <Dp size={136} /><h1>{NAME}</h1>
+      <Dp size={92} /><h1>{NAME}</h1>
       <input className="adm-pill" type="password" aria-label="Password" placeholder="Enter Password" autoComplete="current-password" autoFocus disabled={busy} value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={!!err} data-bad={!!err || undefined} />
       <p className="adm-prompt" role={err ? 'alert' : undefined}>{err || setupMsg || (busy ? 'Unlocking…' : hint ? 'The password you chose for this dashboard.' : touch ? 'Touch ID or Enter Password' : 'Enter Password')}</p>
-      <div className="adm-acts">{touch && <button type="button" className="adm-finger" aria-label="Unlock with Touch ID" onClick={useTouchId}><RiFingerprintLine size={28} /></button>}<button type="button" className="adm-hint" onClick={() => setHint(!hint)}>Password hint</button></div>
+      <div className="adm-acts">{touch && <button type="button" className="adm-finger" aria-label="Unlock with Touch ID" onClick={useTouchId}><RiFingerprintLine size={22} /></button>}<button type="button" className="adm-hint" onClick={() => setHint(!hint)}>Password hint</button></div>
     </form></div>
 }
 
