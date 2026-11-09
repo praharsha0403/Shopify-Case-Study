@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+*.bak
+.bak-r2/
+_old/
+flowpath.framer.ai/
+github.com/
+.claude/
+*.log
+.env*
