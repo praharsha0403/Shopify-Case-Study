@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { RiBookOpenLine, RiCursorLine, RiDashboardLine, RiDownload2Line, RiFileListLine, RiFlagLine, RiGlobalLine, RiLinksLine, RiListCheck2, RiLockLine, RiPulseLine, RiRefreshLine, RiRepeatLine, RiCloseLine } from '@remixicon/react'
+import { RiBookOpenLine, RiCursorLine, RiDashboardLine, RiDownload2Line, RiFileListLine, RiFingerprintLine, RiFlagLine, RiGlobalLine, RiLinksLine, RiListCheck2, RiLockLine, RiPulseLine, RiRefreshLine, RiRepeatLine, RiCloseLine } from '@remixicon/react'
 import { Bands } from '@/ui/fp'
 import { CONTACT_LABEL, DEFINITIONS, EVENT_LABEL, SECTIONS, avg, buildSessions, byDim, cohorts, countryName, dayKey, flag, fmtSecs, funnel, p75, pct, secLabel, sectionStats, summary, tally, type DimRow, type Ev, type Rec, type Session } from './metrics'
 import { BarList, Empty, Funnel, GlobalTip, HourGrid, Kpi, Line, Meter, Panel, Seg, Table, fmt, type Col } from './ui'
@@ -21,18 +21,50 @@ const post = (action: string, extra = {}) => fetch('/api/auth', { method: 'POST'
 const safe = (k: string, v?: string | null) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v) } catch { /* */ } return null }
 const place = (s: Session) => [s.city, s.regionName, countryName(s.country)].filter(Boolean).join(', ')
 const Wall = () => <div className="adm-wall" aria-hidden><Bands /></div>
-const Dp = ({ size = 40 }: { size?: number }) => <img className="adm-dp" src="/ref/praharsha.webp" alt="Praharsha Nelaturi" width={size} height={size} />
+const Dp = ({ size = 40 }: { size?: number }) => <img className="adm-dp" src="/ref/praharsha.webp" alt={NAME} width={size} height={size} />
 
-function Lock({ onOk, setupMsg }: { onOk: () => void; setupMsg: string }) {
-  const [pw, setPw] = useState(''), [err, setErr] = useState(''), [busy, setBusy] = useState(false)
+const NAME = 'Chaitanya Sai'
+const b64 = (b: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+const unb64 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))
+const hasTouchId = async () => { try { return !!window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() } catch { return false } }
+async function enableTouchId() {
+  const o = await (await post('reg-options')).json()
+  const c = await navigator.credentials.create({ publicKey: { challenge: new TextEncoder().encode(o.challenge), rp: { id: o.rpId, name: 'Case Study Analytics' }, user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'admin', displayName: NAME }, pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }], authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' }, timeout: 60000 } }) as PublicKeyCredential
+  const res = c.response as AuthenticatorAttestationResponse
+  const r = await post('reg-verify', { id: b64(c.rawId), publicKey: b64(res.getPublicKey()!), clientDataJSON: b64(res.clientDataJSON) })
+  if (!r.ok) throw new Error((await r.json()).error)
+  safe('pn-tid', '1')
+}
+function Lock({ onOk, setupMsg, passkeys }: { onOk: () => void; setupMsg: string; passkeys: number }) {
+  const [pw, setPw] = useState(''), [err, setErr] = useState(''), [busy, setBusy] = useState(false), [now, setNow] = useState(new Date()), [touch, setTouch] = useState(false), [hint, setHint] = useState(false)
+  useEffect(() => { hasTouchId().then(setTouch); const t = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(t) }, [])
+  const done = () => { safe('pn-me', '1'); onOk() }
   async function submit(e: FormEvent) {
-    e.preventDefault(); setBusy(true); setErr('')
-    try { const r = await post('login', { password: pw }); if (r.ok) { safe('pn-me', '1'); onOk() } else setErr((await r.json()).error || 'Could not sign in.') } catch { setErr('Could not reach the server.') } finally { setBusy(false) }
+    e.preventDefault(); if (!pw || busy) return
+    setBusy(true); setErr('')
+    try { const r = await post('login', { password: pw }); if (r.ok) done(); else { setErr((await r.json()).error || 'Could not sign in.'); setPw('') } } catch { setErr('Could not reach the server.') } finally { setBusy(false) }
   }
-  return <div className="adm-lock"><Wall /><form className="adm-lock-c" onSubmit={submit}><Dp size={76} /><h1>Case study analytics</h1><p>Praharsha Nelaturi · Private</p>
-    <label htmlFor="pw">Password</label><input id="pw" type="password" autoComplete="current-password" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={!!err} />
-    {err && <div className="adm-err" role="alert">{err}</div>}{setupMsg && <div className="adm-err" role="status">{setupMsg}</div>}
-    <button type="submit" className="btn btn-dark" disabled={busy || !pw}>{busy ? 'Unlocking…' : 'Unlock'}</button></form></div>
+  async function useTouchId() {
+    setErr('')
+    if (!passkeys) { setErr('Unlock with your password once, then turn on Touch ID in the sidebar.'); return }
+    try {
+      const o = await (await post('auth-options')).json()
+      const c = await navigator.credentials.get({ publicKey: { challenge: new TextEncoder().encode(o.challenge), rpId: o.rpId, allowCredentials: o.ids.map((id: string) => ({ type: 'public-key', id: unb64(id) })), userVerification: 'required', timeout: 60000 } }) as PublicKeyCredential
+      const a = c.response as AuthenticatorAssertionResponse
+      const r = await post('auth-verify', { id: b64(c.rawId), authenticatorData: b64(a.authenticatorData), clientDataJSON: b64(a.clientDataJSON), signature: b64(a.signature) })
+      if (r.ok) done(); else setErr((await r.json()).error || 'Touch ID did not match.')
+    } catch { setErr('Touch ID was cancelled.') }
+  }
+  const date = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+  const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).replace(/\s?[AP]M/i, '')
+  return <div className="adm-lock"><Wall />
+    <div className="adm-clock"><div className="adm-date">{date}</div><time className="adm-time">{time}</time></div>
+    <form className="adm-who" onSubmit={submit}>
+      <Dp size={76} /><h1>{NAME}</h1>
+      <input className="adm-pill" type="password" aria-label="Password" placeholder="Enter Password" autoComplete="current-password" autoFocus disabled={busy} value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={!!err} data-bad={!!err || undefined} />
+      <p className="adm-prompt" role={err ? 'alert' : undefined}>{err || setupMsg || (busy ? 'Unlocking…' : hint ? 'The password you chose for this dashboard.' : touch ? 'Touch ID or Enter Password' : 'Enter Password')}</p>
+      <div className="adm-acts">{touch && <button type="button" className="adm-finger" aria-label="Unlock with Touch ID" onClick={useTouchId}><RiFingerprintLine size={20} /></button>}<button type="button" className="adm-hint" onClick={() => setHint(!hint)}>Password hint</button></div>
+    </form></div>
 }
 
 const dimCols = (first: string, show?: (r: DimRow) => ReactNode): Col<DimRow>[] => [
@@ -48,7 +80,7 @@ function csv(l: Session[]) {
 }
 
 export default function App() {
-  const [recs, setRecs] = useState<Map<string, Rec>>(new Map()), [now, setNow] = useState(Date.now()), [state, setState] = useState<'loading' | 'locked' | 'ok' | 'error'>('loading'), [setupMsg, setSetupMsg] = useState(''), [noStore, setNoStore] = useState(false)
+  const [recs, setRecs] = useState<Map<string, Rec>>(new Map()), [now, setNow] = useState(Date.now()), [state, setState] = useState<'loading' | 'locked' | 'ok' | 'error'>('loading'), [setupMsg, setSetupMsg] = useState(''), [passkeys, setPasskeys] = useState(0), [canTouch, setCanTouch] = useState(false), [touchMsg, setTouchMsg] = useState(''), [noStore, setNoStore] = useState(false)
   const [range, setRange] = useState<Range>('30'), [tab, setTab] = useState<Tab>('overview'), [f, setF] = useState<Filters>(NOF), [open, setOpen] = useState<Session | null>(null), [spin, setSpin] = useState(false), [excluded, setExcluded] = useState(!!safe('pn-me')), [showBots, setShowBots] = useState(false)
   const since = useRef(0), demo = import.meta.env.DEV && new URLSearchParams(location.search).has('demo')
 
@@ -69,7 +101,8 @@ export default function App() {
       setState('ok')
     } catch { setState((s) => (s === 'ok' ? 'ok' : 'error')) } finally { setTimeout(() => setSpin(false), 300) }
   }, [demo])
-  useEffect(() => { if (demo) { load(); return } fetch('/api/auth').then((r) => r.json()).then((j) => { if (!j.setup?.password) setSetupMsg('Setup is not finished on the server.'); if (j.authed) load(); else setState('locked') }).catch(() => setState('error')) }, [load, demo])
+  useEffect(() => { if (demo) { load(); return } fetch('/api/auth').then((r) => r.json()).then((j) => { if (!j.setup?.password) setSetupMsg('Setup is not finished on the server.'); setPasskeys(j.passkeys || 0); if (j.authed) load(); else setState('locked') }).catch(() => setState('error')) }, [load, demo])
+  useEffect(() => { hasTouchId().then((ok) => setCanTouch(ok && !safe('pn-tid'))) }, [])
   useEffect(() => { const t = setInterval(() => { if (!document.hidden && state === 'ok') load() }, 120000); return () => clearInterval(t) }, [load, state])
 
   const all = useMemo(() => buildSessions([...recs.values()], now).filter((s) => showBots || !s.automated), [recs, now, showBots])
@@ -80,7 +113,7 @@ export default function App() {
   const sm = useMemo(() => summary(cur), [cur]), pm = useMemo(() => summary(prev), [prev]), live = all.filter((s) => s.live)
   const logout = () => post('logout').finally(() => { setRecs(new Map()); since.current = 0; setState('locked') })
 
-  if (state === 'locked') return <Lock setupMsg={setupMsg} onOk={() => { setExcluded(true); setState('loading'); load() }} />
+  if (state === 'locked') return <Lock setupMsg={setupMsg} passkeys={passkeys} onOk={() => { setExcluded(true); setState('loading'); load() }} />
   if (state !== 'ok') return <div className="adm-load"><Wall /><span>{state === 'error' ? 'Could not load analytics. Refresh to try again.' : 'Loading…'}</span></div>
   const meta = TABS.find((t) => t[0] === tab)!
   const chips = (Object.entries(f) as [keyof Filters, string][]).filter(([, v]) => v)
@@ -88,12 +121,14 @@ export default function App() {
   const p = { cur, all, sm, pm, now, set, f, open: setOpen }
   return <div className="adm"><Wall /><GlobalTip />
     <aside className="adm-side">
-      <div className="adm-me"><Dp /><div><b>Praharsha Nelaturi</b><span>Shopify case study</span></div></div>
+      <div className="adm-me"><Dp /><div><b>{NAME}</b><span>Shopify case study</span></div></div>
       <nav aria-label="Dashboard sections">{TABS.map(([k, l, , Ic]) => <button key={k} type="button" aria-current={tab === k ? 'page' : undefined} onClick={() => { setTab(k); scrollTo({ top: 0 }) }}><Ic size={17} />{l}</button>)}</nav>
       <div className="adm-side-b">
         <div className="adm-live" data-tip="Sessions with a signal in the last 5 minutes"><i data-on={live.length > 0 || undefined} />{live.length} reading now</div>
         <button type="button" className="adm-mini" data-tip="When excluded, your own visits from this browser are not recorded" onClick={() => { if (excluded) { safe('pn-me', null); setExcluded(false) } else { safe('pn-me', '1'); setExcluded(true) } }}>This browser: {excluded ? 'excluded' : 'tracked'}</button>
         <button type="button" className="adm-mini" onClick={() => setShowBots(!showBots)}>Automated visits: {showBots ? 'shown' : 'hidden'}</button>
+        {canTouch && !demo && <button type="button" className="adm-mini" onClick={() => { setTouchMsg(''); enableTouchId().then(() => { setCanTouch(false); setPasskeys((n) => n + 1); setTouchMsg('Touch ID is on for this device.') }).catch(() => setTouchMsg('Touch ID was not turned on.')) }}><RiFingerprintLine size={14} /> Turn on Touch ID</button>}
+        {touchMsg && <div className="adm-mini" role="status">{touchMsg}</div>}
         {!demo && <button type="button" className="adm-mini" onClick={logout}><RiLockLine size={14} /> Lock</button>}
       </div>
     </aside>
