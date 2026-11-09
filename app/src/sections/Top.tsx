@@ -229,7 +229,7 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
 
 export function Manifesto() {
   return (
-    <section className="sec" data-sec="thesis" style={{ paddingTop: 120 }}>
+    <section className="sec" id="thesis" data-sec="thesis" style={{ paddingTop: 120 }}>
       <div className="wrap thesis-wrap">
         <div className="thesis-side">
           <Tag>The thesis</Tag>
@@ -678,7 +678,7 @@ export function HowItEnded() {
     return () => window.removeEventListener("scroll", f);
   }, []);
   return (
-    <section className="sec" data-sec="how">
+    <section className="sec" id="steps" data-sec="how">
       <div className="wrap">
         <SecHead tag="How it works" title="Where this ended up, in five steps." sub="Each step is a claim, and the small screen beside it is what the claim looks like in the product." />
         <div className="steps" ref={ref}>
