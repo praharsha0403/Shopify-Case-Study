@@ -3805,7 +3805,7 @@ button:focus-visible,
   .qa,
   .closer + *,
   .card:has(> table),
-  .card:has(.ad-swaplist) {
+  .card:has(.sfy-swaplist) {
     break-inside: auto !important;
     page-break-inside: auto !important;
   }

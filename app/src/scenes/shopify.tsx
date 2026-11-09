@@ -54,32 +54,32 @@ type Nav = "catalogs" | "rollouts" | "markets";
 
 function Admin({ active, children, compact, sidekick = true }: { active: Nav; children: ReactNode; compact?: boolean; sidekick?: boolean }) {
   const item = (icon: Ic | null, label: string, opts: { on?: boolean; sub?: boolean; badge?: string } = {}) => (
-    <div className="ad-nav" data-on={opts.on || undefined} data-sub={opts.sub || undefined}>
+    <div className="sfy-nav" data-on={opts.on || undefined} data-sub={opts.sub || undefined}>
       {icon ? (
-        <span className="ad-nav__ic">
+        <span className="sfy-nav__ic">
           <I s={icon} />
         </span>
       ) : null}
-      <span className="ad-nav__t">{label}</span>
-      {opts.badge ? <span className="ad-nav__b">{opts.badge}</span> : null}
+      <span className="sfy-nav__t">{label}</span>
+      {opts.badge ? <span className="sfy-nav__b">{opts.badge}</span> : null}
     </div>
   );
   return (
-    <div className="ad">
+    <div className="sfy">
       {!compact && (
-        <aside className="ad-side">
-          <div className="ad-side__top">
+        <aside className="sfy-side">
+          <div className="sfy-side__top">
             <BrandMark brand="shopify" size={24} tile={false} surface="dark" />
-            <span className="ad-side__toggle">
+            <span className="sfy-side__toggle">
               <I s={LayoutSidebarLeftIcon} size={18} />
             </span>
           </div>
-          <div className="ad-search">
+          <div className="sfy-search">
             <I s={SearchIcon} size={16} />
             <span>Search</span>
             <kbd>⌘K</kbd>
           </div>
-          <div className="ad-navlist">
+          <div className="sfy-navlist">
             {item(HomeIcon, "Home")}
             {item(OrderIcon, "Orders", { badge: "12" })}
             {item(ProductIcon, "Products")}
@@ -91,24 +91,24 @@ function Admin({ active, children, compact, sidekick = true }: { active: Nav; ch
             {item(null, "Catalogs", { on: active === "catalogs", sub: true })}
             {item(null, "Rollouts", { on: active === "rollouts", sub: true })}
             {item(ChartVerticalIcon, "Analytics")}
-            <div className="ad-navhead">Sales channels</div>
+            <div className="sfy-navhead">Sales channels</div>
             {item(StoreIcon, "Online Store")}
             {item(ShopcodesIcon, "Agentic")}
           </div>
-          <div className="ad-side__foot">
+          <div className="sfy-side__foot">
             {item(SettingsIcon, "Settings")}
-            <div className="ad-store">
+            <div className="sfy-store">
               <img src={LEGO_LOGO} alt="" />
               <span>LEGO Wholesale</span>
             </div>
           </div>
         </aside>
       )}
-      <div className="ad-sheet">
+      <div className="sfy-sheet">
         {children}
         {sidekick && !compact && (
-          <div className="ad-sidekick">
-            <span className="ad-sidekick__av" />
+          <div className="sfy-sidekick">
+            <span className="sfy-sidekick__av" />
             <span>Work with Sidekick</span>
           </div>
         )}
@@ -119,39 +119,39 @@ function Admin({ active, children, compact, sidekick = true }: { active: Nav; ch
 
 function Head({ icon, crumbs, badge, actions, back }: { icon: Ic; crumbs: string[]; badge?: ReactNode; actions?: ReactNode; back?: boolean }) {
   return (
-    <div className="ad-head">
+    <div className="sfy-head">
       {back ? (
-        <span className="ad-back">
+        <span className="sfy-back">
           <I s={ChevronLeftIcon} size={16} />
         </span>
       ) : null}
-      <span className="ad-head__ic">
+      <span className="sfy-head__ic">
         <I s={icon} size={16} />
       </span>
       {crumbs.map((c, i) => (
-        <span key={c} className={i === crumbs.length - 1 ? "ad-head__t" : "ad-head__c"}>
+        <span key={c} className={i === crumbs.length - 1 ? "sfy-head__t" : "sfy-head__c"}>
           {c}
           {i < crumbs.length - 1 ? <em>/</em> : null}
         </span>
       ))}
       {badge}
-      <span className="ad-head__sp" />
+      <span className="sfy-head__sp" />
       {actions}
     </div>
   );
 }
 
 const Pill = ({ children, primary, ...rest }: { children: ReactNode; primary?: boolean } & Record<string, unknown>) => (
-  <span className="ad-btn" data-primary={primary || undefined} {...rest}>
+  <span className="sfy-btn" data-primary={primary || undefined} {...rest}>
     {children}
   </span>
 );
 const St = ({ tone, children }: { tone?: "ok" | "info" | "draft" | "warn"; children: ReactNode }) => (
-  <span className="ad-badge" data-tone={tone}>
+  <span className="sfy-badge" data-tone={tone}>
     {children}
   </span>
 );
-const Chk = ({ on, off }: { on?: boolean; off?: boolean }) => <span className="ad-chk" data-on={on || undefined} data-off={off || undefined} />;
+const Chk = ({ on, off }: { on?: boolean; off?: boolean }) => <span className="sfy-chk" data-on={on || undefined} data-off={off || undefined} />;
 
 /* ======================================================================== */
 /* HERO, the real "New rollout" flow: add catalogs, the direct one can't   */
@@ -219,42 +219,42 @@ export function HeroScene() {
                   badge={<St tone="info">Draft</St>}
                   actions={compact ? undefined : <Pill primary>Schedule</Pill>}
                 />
-                <div className="ad-body ad-form">
-                  <div className="ad-card ad-row2">
-                    <div className="ad-field">
+                <div className="sfy-body sfy-form">
+                  <div className="sfy-card sfy-row2">
+                    <div className="sfy-field">
                       <label>Rollout name</label>
-                      <div className="ad-input">2027 contract pricing</div>
+                      <div className="sfy-input">2027 contract pricing</div>
                     </div>
                     <Pill>
                       <I s={CalendarTimeIcon} size={14} /> Launch
                     </Pill>
                   </div>
-                  <div className="ad-sec">Scheduling</div>
-                  <div className="ad-card ad-kv">
-                    <span className="ad-kv__k">Changes publish</span>
-                    <div className="ad-input">Jan 1, 2027 · 12:00 AM EST</div>
+                  <div className="sfy-sec">Scheduling</div>
+                  <div className="sfy-card sfy-kv">
+                    <span className="sfy-kv__k">Changes publish</span>
+                    <div className="sfy-input">Jan 1, 2027 · 12:00 AM EST</div>
                   </div>
-                  <div className="ad-sec">Changes</div>
-                  <div className="ad-card ad-changes" data-filled={s.applied || undefined}>
+                  <div className="sfy-sec">Changes</div>
+                  <div className="sfy-card sfy-changes" data-filled={s.applied || undefined}>
                     <Collapse open={!s.applied}>
-                      <div className="ad-empty">
+                      <div className="sfy-empty">
                         <span>Prepare changes for a launch, sales event or experiment</span>
-                        <span className="ad-btn" data-soft data-target="add-changes" data-cursor="pointer">
+                        <span className="sfy-btn" data-soft data-target="add-changes" data-cursor="pointer">
                           Add changes
                         </span>
                       </div>
                     </Collapse>
                     <Collapse open={s.applied} reveal="drop">
-                      <div className="ad-change">
-                        <span className="ad-change__ic">
+                      <div className="sfy-change">
+                        <span className="sfy-change__ic">
                           <I s={CatalogIcon} size={18} />
                         </span>
                         <div>
-                          <div className="ad-strong">Brickyard Toys · 2027 book</div>
-                          <div className="ad-sub">Catalog · set to Active</div>
+                          <div className="sfy-strong">Brickyard Toys · 2027 book</div>
+                          <div className="sfy-sub">Catalog · set to Active</div>
                         </div>
                         <St tone="ok">Active</St>
-                        <span className="ad-x" data-target="remove" data-cursor="pointer">
+                        <span className="sfy-x" data-target="remove" data-cursor="pointer">
                           ×
                         </span>
                       </div>
@@ -262,9 +262,9 @@ export function HeroScene() {
                   </div>
                   {!compact && (
                     <>
-                      <div className="ad-sec">Audience</div>
-                      <div className="ad-card ad-aud">
-                        <div className="ad-aud__k">
+                      <div className="sfy-sec">Audience</div>
+                      <div className="sfy-card sfy-aud">
+                        <div className="sfy-aud__k">
                           <span>Traffic allocation</span>
                           <Pill>All eligible visitors</Pill>
                           <span>Eligibility</span>
@@ -272,7 +272,7 @@ export function HeroScene() {
                             <Swap id={s.applied ? 1 : 0}>{s.applied ? "1 market" : "0 markets"}</Swap>
                           </Pill>
                         </div>
-                        <div className="ad-ring" data-on={s.applied || undefined}>
+                        <div className="sfy-ring" data-on={s.applied || undefined}>
                           <span />
                           <em>Reached</em>
                         </div>
@@ -282,55 +282,55 @@ export function HeroScene() {
                 </div>
               </Admin>
               {/* dims the admin; lives inside the window so the window's rounded corners clip it */}
-              <div className="ad-scrim" data-on={s.modal || undefined} />
+              <div className="sfy-scrim" data-on={s.modal || undefined} />
             </Window>
 
             {/* The real "Add changes" dialog */}
-            <div className="ad-modal" data-on={s.modal || undefined}>
-              <div className="ad-modal__h">
+            <div className="sfy-modal" data-on={s.modal || undefined}>
+              <div className="sfy-modal__h">
                 <span>Add changes</span>
-                <span className="ad-x">×</span>
+                <span className="sfy-x">×</span>
               </div>
-              <div className="ad-modal__b">
+              <div className="sfy-modal__b">
                 {!compact && (
-                  <div className="ad-modal__cats">
+                  <div className="sfy-modal__cats">
                     {[
                       [CatalogIcon, "Catalogs", true],
                       [CartIcon, "Checkout & accounts"],
                       [DiscountIcon, "Discounts"],
                       [StoreIcon, "Online store"],
                     ].map(([ic, t, on]) => (
-                      <div key={t as string} className="ad-cat" data-on={on || undefined}>
+                      <div key={t as string} className="sfy-cat" data-on={on || undefined}>
                         <I s={ic as Ic} size={16} />
                         {t as string}
                       </div>
                     ))}
                   </div>
                 )}
-                <div className="ad-modal__list">
+                <div className="sfy-modal__list">
                   {MODAL_ROWS.map((r) => {
                     const checked = r.id === "pick-market" && s.picked;
                     return (
-                      <div key={r.id} className="ad-pick" data-off={!r.ok || undefined} data-target={r.id} data-cursor={r.ok ? "pointer" : "default"}>
+                      <div key={r.id} className="sfy-pick" data-off={!r.ok || undefined} data-target={r.id} data-cursor={r.ok ? "pointer" : "default"}>
                         <Chk on={checked} off={!r.ok} />
                         <div style={{ minWidth: 0 }}>
-                          <div className="ad-strong">{r.t}</div>
-                          <div className="ad-sub">{r.s}</div>
+                          <div className="sfy-strong">{r.t}</div>
+                          <div className="sfy-sub">{r.s}</div>
                         </div>
                         {!r.ok ? (
-                          <span className="ad-lock">
+                          <span className="sfy-lock">
                             <I s={AlertTriangleIcon} size={16} />
                           </span>
                         ) : null}
                       </div>
                     );
                   })}
-                  <div className="ad-modal__create">
+                  <div className="sfy-modal__create">
                     <I s={PlusCircleIcon} size={16} /> Create a catalog
                   </div>
                 </div>
               </div>
-              <div className="ad-modal__f">
+              <div className="sfy-modal__f">
                 <Pill>Cancel</Pill>
                 <Pill primary data-target="apply" data-cursor="pointer">
                   Apply
@@ -382,44 +382,44 @@ export function SwapScene() {
             <Window url="admin.shopify.com/store/lego-wholesale/rollouts/2027-contract" urlShape="pill" className="sc-swap__win">
               <Admin active="rollouts" compact={compact} sidekick={false}>
                 <Head icon={CalendarTimeIcon} back crumbs={compact ? ["2027 contract"] : ["Rollouts", "2027 contract pricing"]} badge={<St tone={live27 ? "ok" : "draft"}>{live27 ? "Running" : "Scheduled"}</St>} />
-                <div className="ad-body">
-                  <div className="ad-card ad-tl">
-                    <div className="ad-tl__head">
+                <div className="sfy-body">
+                  <div className="sfy-card sfy-tl">
+                    <div className="sfy-tl__head">
                       {head.map((h, i) => (
                         <span key={i} data-on={h === "Jan 1" || undefined}>
                           {h}
                         </span>
                       ))}
                     </div>
-                    <div className="ad-tl__lane">
-                      <span className="ad-tl__bar" style={{ left: "56%", width: "30%" }}>
+                    <div className="sfy-tl__lane">
+                      <span className="sfy-tl__bar" style={{ left: "56%", width: "30%" }}>
                         Event · Brickyard Toys
                       </span>
                     </div>
-                    <span className="ad-tl__now" style={{ left: `${play}%` }} />
+                    <span className="sfy-tl__now" style={{ left: `${play}%` }} />
                   </div>
-                  <div className="ad-card ad-swaplist">
+                  <div className="sfy-card sfy-swaplist">
                     {[
                       { n: "Brickyard Toys · 2026 book", live: !live27, p: "$50.00" },
                       { n: "Brickyard Toys · 2027 book", live: live27, p: "$46.40" },
                     ].map((r) => (
-                      <div key={r.n} className="ad-swaprow" data-live={r.live || undefined}>
-                        <span className="ad-thumb">
+                      <div key={r.n} className="sfy-swaprow" data-live={r.live || undefined}>
+                        <span className="sfy-thumb">
                           <img src={SETS.galaxy.img} alt="" />
                         </span>
                         <div style={{ minWidth: 0 }}>
-                          <div className="ad-strong">{r.n}</div>
-                          <div className="ad-sub">
+                          <div className="sfy-strong">{r.n}</div>
+                          <div className="sfy-sub">
                             {SETS.galaxy.name} {SETS.galaxy.num}
                           </div>
                         </div>
-                        {!compact && <span className="ad-num">{r.p}</span>}
+                        {!compact && <span className="sfy-num">{r.p}</span>}
                         <St tone={r.live ? "ok" : "draft"}>
                           <Swap id={r.live ? "a" : "d"}>{r.live ? "Active" : "Draft"}</Swap>
                         </St>
                       </div>
                     ))}
-                    <div className="ad-note">Prices live on each catalog. The rollout only switches which one is active.</div>
+                    <div className="sfy-note">Prices live on each catalog. The rollout only switches which one is active.</div>
                   </div>
                 </div>
               </Admin>
@@ -473,9 +473,9 @@ export function MarketScene() {
             <Window url="admin.shopify.com/store/lego-wholesale/markets" urlShape="pill" className="sc-market__win">
               <Admin active="markets" compact={compact} sidekick={false}>
                 <Head icon={GlobeIcon} back crumbs={compact ? ["Brickyard Toys"] : ["Markets", "Brickyard Toys"]} badge={<St>B2B</St>} />
-                <div className="ad-body">
-                  <div className="ad-card" style={{ padding: "14px 16px" }}>
-                    <div className="ad-strong" style={{ marginBottom: 6 }}>
+                <div className="sfy-body">
+                  <div className="sfy-card" style={{ padding: "14px 16px" }}>
+                    <div className="sfy-strong" style={{ marginBottom: 6 }}>
                       Company locations
                     </div>
                     {[
@@ -483,14 +483,14 @@ export function MarketScene() {
                       ["Company locations in selected regions", false],
                       ["Specific company locations", true],
                     ].map(([t, on]) => (
-                      <div key={t as string} className="ad-radio" data-on={on || undefined}>
+                      <div key={t as string} className="sfy-radio" data-on={on || undefined}>
                         <span />
                         <div>
-                          <div className={on ? "ad-strong" : undefined}>{t as string}</div>
+                          <div className={on ? "sfy-strong" : undefined}>{t as string}</div>
                           {on ? (
                             <>
-                              <div className="ad-sub">Includes only the company locations you specify</div>
-                              <span className="ad-tag">Brickyard Toys · Austin, TX</span>
+                              <div className="sfy-sub">Includes only the company locations you specify</div>
+                              <span className="sfy-tag">Brickyard Toys · Austin, TX</span>
                             </>
                           ) : null}
                         </div>
@@ -501,12 +501,12 @@ export function MarketScene() {
               </Admin>
             </Window>
             <div className="sc-market__sat">
-              <div className="ad-sub">Catalog</div>
+              <div className="sfy-sub">Catalog</div>
               <div className="sc-market__row">
-                <span className="ad-thumb">
+                <span className="sfy-thumb">
                   <img src={SETS.starry.img} alt="" />
                 </span>
-                <span className="ad-strong">Brickyard Toys · 2027 book</span>
+                <span className="sfy-strong">Brickyard Toys · 2027 book</span>
               </div>
               <div className="sc-market__ok">
                 <I s={CalendarTimeIcon} size={16} /> Can be added to a rollout
@@ -539,8 +539,8 @@ export function PreflightScene() {
           <Window url="admin.shopify.com/store/lego-wholesale/rollouts/new" urlShape="pill" className="sc-pre__win">
             <Admin active="rollouts" compact={compact} sidekick={false}>
               <Head icon={CalendarTimeIcon} back crumbs={compact ? ["Preflight"] : ["Rollouts", "Holiday contract event"]} badge={<St tone="warn">Concept</St>} actions={compact ? undefined : <Pill primary>Review and schedule</Pill>} />
-              <div className="ad-body">
-                <div className="ad-card ad-meta">
+              <div className="sfy-body">
+                <div className="sfy-card sfy-meta">
                   {[
                     ["Type", "Event"],
                     ["Starts", "Dec 1 · 12:00 AM"],
@@ -548,36 +548,36 @@ export function PreflightScene() {
                     ["Audience", "100% of Brickyard Toys buyers"],
                   ].map(([k, v]) => (
                     <div key={k}>
-                      <div className="ad-sub">{k}</div>
-                      <div className="ad-strong ad-trunc">{v}</div>
+                      <div className="sfy-sub">{k}</div>
+                      <div className="sfy-strong sfy-trunc">{v}</div>
                     </div>
                   ))}
                 </div>
-                <div className="ad-warn">
+                <div className="sfy-warn">
                   <I s={AlertTriangleIcon} size={18} />
                   <div>
-                    <div className="ad-strong">The direct catalog decides these prices</div>
-                    <div className="ad-sub">A matching market catalog is cheaper, but direct assignment has higher precedence for overlapping products.</div>
+                    <div className="sfy-strong">The direct catalog decides these prices</div>
+                    <div className="sfy-sub">A matching market catalog is cheaper, but direct assignment has higher precedence for overlapping products.</div>
                   </div>
                 </div>
-                <div className="ad-card ad-table">
-                  <div className="ad-tr ad-th">
+                <div className="sfy-card sfy-table">
+                  <div className="sfy-tr sfy-th">
                     <span>Product</span>
                     {!compact && <span>Direct, after activation</span>}
                     {!compact && <span>Matching market</span>}
                     <span>Buyer pays</span>
                   </div>
                   {rows.map((r) => (
-                    <div key={r.p.num} className="ad-tr">
-                      <span className="ad-prod">
-                        <span className="ad-thumb">
+                    <div key={r.p.num} className="sfy-tr">
+                      <span className="sfy-prod">
+                        <span className="sfy-thumb">
                           <img src={r.p.img} alt="" />
                         </span>
-                        <span className="ad-strong ad-trunc">{r.p.name}</span>
+                        <span className="sfy-strong sfy-trunc">{r.p.name}</span>
                       </span>
-                      {!compact && <span className="ad-num">{$(r.direct)}</span>}
-                      {!compact && <span className="ad-num ad-strike">{$(r.market)}</span>}
-                      <span className="ad-num ad-strong">{$(r.direct)}</span>
+                      {!compact && <span className="sfy-num">{$(r.direct)}</span>}
+                      {!compact && <span className="sfy-num sfy-strike">{$(r.market)}</span>}
+                      <span className="sfy-num sfy-strong">{$(r.direct)}</span>
                     </div>
                   ))}
                 </div>
