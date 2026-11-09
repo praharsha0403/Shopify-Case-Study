@@ -1,3 +1,4 @@
+@import "tailwindcss/preflight";
 /* Case study analytics: the same tokens as the site. Ground, hairlines, blue accent, Manrope display and Inter body. */
 .adm-wall { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .adm-wall .bands { -webkit-mask-image: none; mask-image: none; height: 100%; }
