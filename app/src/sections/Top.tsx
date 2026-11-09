@@ -202,7 +202,7 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
       const last = () => {
         if (!pending.current) return;
         pending.current = false;
-        if (!open()) window.location.href = href;
+        open();
       };
       // a mouse release is followed by a click (see onClick); a touch release is itself a gesture and fires no click after a drag
       if (e.pointerType === "mouse") window.setTimeout(last, 400);
