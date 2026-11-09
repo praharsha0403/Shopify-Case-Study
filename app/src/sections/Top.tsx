@@ -165,9 +165,7 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
     window.setTimeout(() => (suppress.current = false), 600);
   };
   const onClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (suppress.current) return;
-    open();
+    if (suppress.current) e.preventDefault();
   };
   // the moment the knob crosses the line: snap to the end and open; if the browser
   // blocks a tab mid-drag, open the instant the pointer is released instead
@@ -197,7 +195,8 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
   const onUp = () => {
     if (pending.current) {
       pending.current = false;
-      open();
+      // still blocked after release: go there in this tab rather than do nothing
+      if (!open()) window.location.href = href;
       return;
     }
     const d = drag.current;
@@ -240,7 +239,7 @@ export function Manifesto() {
                 <a href="https://www.linkedin.com/in/praharsha-nelaturi/" target="_blank" rel="noreferrer" aria-label="Praharsha Nelaturi on LinkedIn">
                   <RiLinkedinFill size={16} />
                 </a>
-                <a href="https://praharsha.s.gy/Portfolio" target="_blank" rel="noreferrer" aria-label="Praharsha Nelaturi's portfolio">
+                <a href="https://praharsha.framer.website/" target="_blank" rel="noreferrer" aria-label="Praharsha Nelaturi's portfolio">
                   <RiGlobalLine size={16} />
                 </a>
               </div>
@@ -253,7 +252,7 @@ export function Manifesto() {
               </div>
             </div>
             <p className="pc2-bio">A Product Manager with 3+ years of experience across 0 to 1 product building, data-driven growth, and GTM strategy.</p>
-            <SwipeCta href="https://praharsha.s.gy/quickcall" label="Quick Connect?" />
+            <SwipeCta href="https://cal.com/praharsha.n/quick-call" label="Quick Connect?" />
           </div>
         </div>
         <div className="min-w-0">

@@ -22,7 +22,7 @@ const clip = (t: unknown, n = 70) => String(t ?? "").replace(/\s+/g, " ").trim()
 const IDLE = 60_000, MAX_EV = 430;
 const INTERACTIVE = "a[href],button,summary,select,input,label,[role=button],[role=tab],[role=switch],[role=radio],[role=checkbox],[data-track]";
 const CHARTY = "[role=img],.shot,.vt,[class*=vz],[class*=chart],[class*=stage]";
-const CONTACTS: [RegExp, string][] = [[/linkedin\.com\/in\/praharsha/i, "linkedin"], [/mail\.google\.com|^mailto:/i, "email"], [/quickcall/i, "call"], [/praharsha\.s\.gy\/portfolio/i, "portfolio"]];
+const CONTACTS: [RegExp, string][] = [[/linkedin\.com\/in\/praharsha/i, "linkedin"], [/mail\.google\.com|^mailto:/i, "email"], [/cal\.com\/praharsha/i, "call"], [/praharsha\.framer\.website/i, "portfolio"]];
 const contactOf = (href: string) => CONTACTS.find(([r]) => r.test(href))?.[1] ?? "";
 
 function run() {
