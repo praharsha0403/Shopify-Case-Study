@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import "@/styles/globals.css";
 import "./site.css";
 import App from "./App";
+import { startTracking } from "@/analytics/tracker";
+
+startTracking();
 
 // print: open every collapsed section and reveal everything, then restore afterwards
 let opened: HTMLDetailsElement[] = [];

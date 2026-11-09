@@ -17,6 +17,7 @@ import { Chip } from "@/components/base/badges/chip";
 import { HeroScene } from "@/scenes/shopify";
 import { Bands, Rv, ScrollText, SecHead, Tag } from "@/ui/fp";
 import { cx } from "@/utils/cx";
+import { track as trackEvent } from "@/analytics/tracker";
 
 export const SECTIONS = [
   ["today", "What's true"],
@@ -173,6 +174,7 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
   const finish = (max: number) => {
     setX(max);
     setState("done");
+    trackEvent("contact", { c: "call", via: "swipe", at: "thesis" });
     pending.current = !open();
     blockClick();
     window.setTimeout(() => {
@@ -227,7 +229,7 @@ function SwipeCta({ href, label }: { href: string; label: string }) {
 
 export function Manifesto() {
   return (
-    <section className="sec" style={{ paddingTop: 120 }}>
+    <section className="sec" data-sec="thesis" style={{ paddingTop: 120 }}>
       <div className="wrap thesis-wrap">
         <div className="thesis-side">
           <Tag>The thesis</Tag>
@@ -676,7 +678,7 @@ export function HowItEnded() {
     return () => window.removeEventListener("scroll", f);
   }, []);
   return (
-    <section className="sec">
+    <section className="sec" data-sec="how">
       <div className="wrap">
         <SecHead tag="How it works" title="Where this ended up, in five steps." sub="Each step is a claim, and the small screen beside it is what the claim looks like in the product." />
         <div className="steps" ref={ref}>

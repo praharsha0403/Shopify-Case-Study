@@ -509,7 +509,7 @@ export function Appendix() {
 
 export function Author() {
   return (
-    <section className="sec" style={{ paddingTop: 96 }}>
+    <section className="sec" data-sec="author" style={{ paddingTop: 96 }}>
       <div className="wrap">
         <Rv className="closer" id="author">
           <Bands n={12} />

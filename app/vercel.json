@@ -1,0 +1,8 @@
+{
+  "framework": "vite",
+  "rewrites": [{ "source": "/track", "destination": "/track.html" }],
+  "headers": [
+    { "source": "/track(.*)", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "X-Frame-Options", "value": "DENY" }] },
+    { "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }
+  ]
+}

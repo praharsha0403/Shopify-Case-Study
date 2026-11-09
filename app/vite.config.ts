@@ -6,4 +6,5 @@ import path from 'node:path'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  build: { rollupOptions: { input: { main: path.resolve(__dirname, 'index.html'), track: path.resolve(__dirname, 'track.html') } } },
 })

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cx } from "@/utils/cx";
+import { track } from "@/analytics/tracker";
 
 /** Rise-in on first view (Flowpath's entrance). */
 export function Rv({ children, className, delay = 0, id, style }: { children: ReactNode; className?: string; delay?: number; id?: string; style?: React.CSSProperties }) {
@@ -270,6 +271,9 @@ export function VideoThumb({ id, title, thumb }: { id: string; title: string; th
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (!open) return;
+    const openedAt = Date.now();
+    track("video_open", { id });
+    (window as unknown as { __pnVideo?: (o: boolean) => void }).__pnVideo?.(true);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -277,8 +281,10 @@ export function VideoThumb({ id, title, thumb }: { id: string; title: string; th
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
+      track("video_close", { id, s: Math.round((Date.now() - openedAt) / 1000) });
+      (window as unknown as { __pnVideo?: (o: boolean) => void }).__pnVideo?.(false);
     };
-  }, [open]);
+  }, [open, id]);
   return (
     <>
       <button type="button" className="vt" onClick={() => setOpen(true)} aria-label={`Play: ${title}`}>
